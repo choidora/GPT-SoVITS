@@ -10,7 +10,7 @@ LABEL description="Docker image for GPT-SoVITS"
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Etc/UTC
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends tzdata ffmpeg libsox-dev parallel aria2 git git-lfs && \
+    apt-get install -y --no-install-recommends tzdata ffmpeg libsox-dev parallel aria2 git git-lfs libjpeg-dev libpng-dev unzip && \
     git lfs install && \
     rm -rf /var/lib/apt/lists/*
 
@@ -27,10 +27,10 @@ ARG IMAGE_TYPE=full
 COPY ./Docker /workspace/Docker 
 # elite 类型的镜像里面不包含额外的模型
 RUN if [ "$IMAGE_TYPE" != "elite" ]; then \
-        chmod +x /workspace/Docker/download.sh && \
-        /workspace/Docker/download.sh && \
-        python /workspace/Docker/download.py && \
-        python -m nltk.downloader averaged_perceptron_tagger cmudict; \
+    chmod +x /workspace/Docker/download.sh && \
+    /workspace/Docker/download.sh && \
+    python /workspace/Docker/download.py && \
+    python -m nltk.downloader averaged_perceptron_tagger cmudict; \
     fi
 
 
