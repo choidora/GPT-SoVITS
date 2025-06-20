@@ -191,21 +191,25 @@ def pack_wav(io_buffer: BytesIO, data: np.ndarray, rate: int):
 
 
 def pack_aac(io_buffer: BytesIO, data: np.ndarray, rate: int):
+    file_format: str = os.environ.get("AUDIO_FORMAT", "s16le")
+    channel: str = os.environ.get("AUDIO_CHANNEL", "1")
+    codec: str = os.environ.get("AUDIO_CODEC", "aac")
+    bitrate: str = os.environ.get("AUDIO_BITRATE", "192k")
     process = subprocess.Popen(
         [
             "ffmpeg",
             "-f",
-            "s16le",  # 输入16位有符号小端整数PCM
+            file_format,
             "-ar",
             str(rate),  # 设置采样率
             "-ac",
-            "1",  # 单声道
+            channel,  # 单声道
             "-i",
             "pipe:0",  # 从管道读取输入
             "-c:a",
-            "aac",  # 音频编码器为AAC
+            codec,  # 音频编码器为AAC
             "-b:a",
-            "192k",  # 比特率
+            bitrate,  # 比特率
             "-vn",  # 不包含视频
             "-f",
             "adts",  # 输出AAC数据流格式
