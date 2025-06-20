@@ -191,10 +191,10 @@ def pack_wav(io_buffer: BytesIO, data: np.ndarray, rate: int):
 
 
 def pack_aac(io_buffer: BytesIO, data: np.ndarray, rate: int):
-    file_format: str = os.environ.get("AUDIO_FORMAT", "s16le")
-    channel: str = os.environ.get("AUDIO_CHANNEL", "1")
-    codec: str = os.environ.get("AUDIO_CODEC", "aac")
-    bitrate: str = os.environ.get("AUDIO_BITRATE", "192k")
+    file_format: str = os.environ.get("SOVITS_AUDIO_FORMAT", "s16le")
+    channel: str = os.environ.get("SOVITS_AUDIO_CHANNEL", "1")
+    codec: str = os.environ.get("SOVITS_AUDIO_CODEC", "aac")
+    bitrate: str = os.environ.get("SOVITS_AUDIO_BITRATE", "192k")
     process = subprocess.Popen(
         [
             "ffmpeg",
