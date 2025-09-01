@@ -195,6 +195,7 @@ def pack_aac(io_buffer: BytesIO, data: np.ndarray, rate: int):
     channel: str = os.environ.get("SOVITS_AUDIO_CHANNEL", "1")
     codec: str = os.environ.get("SOVITS_AUDIO_CODEC", "aac")
     bitrate: str = os.environ.get("SOVITS_AUDIO_BITRATE", "192k")
+    loudnorm_params: str = os.environ.get("SOVITS_LOUDNORM_PARAMS", "loudnorm=I=-14:LRA=7:TP=-1.5")
     process = subprocess.Popen(
         [
             "ffmpeg",
@@ -206,6 +207,8 @@ def pack_aac(io_buffer: BytesIO, data: np.ndarray, rate: int):
             channel,  # 单声道
             "-i",
             "pipe:0",  # 从管道读取输入
+            "-af",
+            loudnorm_params,  # Encode audio loudnorm
             "-c:a",
             codec,  # 音频编码器为AAC
             "-b:a",
