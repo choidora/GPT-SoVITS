@@ -508,8 +508,6 @@ if __name__ == "__main__":
             uvicorn.run(app=APP, uds=uds, workers=1)
         else:
             # 既存挙動を維持（-a None で dual-stack）
-            host = args.host
-            port = args.port
             if host == "None":
                 host = None
             uvicorn.run(app=APP, host=host, port=port, workers=1)
