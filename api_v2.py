@@ -501,8 +501,6 @@ if __name__ == "__main__":
         # 既存の host/port 方式に加えて、--uds が指定されたら UDS で待受け
         uds = getattr(args, "uds", None)
         if uds:
-            # 古いソケットが残っていると起動に失敗するため、先に消しておく
-            import os
             try:
                 os.unlink(uds)
             except FileNotFoundError:
