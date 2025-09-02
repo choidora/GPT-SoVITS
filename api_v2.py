@@ -496,6 +496,10 @@ async def set_sovits_weights(weights_path: str = None):
         return JSONResponse(status_code=400, content={"message": "change sovits weight failed", "Exception": str(e)})
     return JSONResponse(status_code=200, content={"message": "success"})
 
+@APP.get("/health")
+async def health():
+    return JSONResponse(status_code=200, content={"status": "ok"})
+
 if __name__ == "__main__":
     try:
         # 既存の host/port 方式に加えて、--uds が指定されたら UDS で待受け
