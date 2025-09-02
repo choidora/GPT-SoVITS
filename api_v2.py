@@ -130,6 +130,7 @@ parser = argparse.ArgumentParser(description="GPT-SoVITS api")
 parser.add_argument("-c", "--tts_config", type=str, default="GPT_SoVITS/configs/tts_infer.yaml", help="tts_infer路径")
 parser.add_argument("-a", "--bind_addr", type=str, default="127.0.0.1", help="default: 127.0.0.1")
 parser.add_argument("-p", "--port", type=int, default="9880", help="default: 9880")
+parser.add_argument("--uds", type=str, default=None, help="UNIX domain socket path (e.g. /tmp/char1.sock)")
 args = parser.parse_args()
 config_path = args.tts_config
 # device = args.device
@@ -495,12 +496,25 @@ async def set_sovits_weights(weights_path: str = None):
         return JSONResponse(status_code=400, content={"message": "change sovits weight failed", "Exception": str(e)})
     return JSONResponse(status_code=200, content={"message": "success"})
 
-
 if __name__ == "__main__":
     try:
-        if host == "None":  # 在调用时使用 -a None 参数，可以让api监听双栈
-            host = None
-        uvicorn.run(app=APP, host=host, port=port, workers=1)
+        # 既存の host/port 方式に加えて、--uds が指定されたら UDS で待受け
+        uds = getattr(args, "uds", None)
+        if uds:
+            # 古いソケットが残っていると起動に失敗するため、先に消しておく
+            import os
+            try:
+                os.unlink(uds)
+            except FileNotFoundError:
+                pass
+            uvicorn.run(app=APP, uds=uds, workers=1)
+        else:
+            # 既存挙動を維持（-a None で dual-stack）
+            host = args.host
+            port = args.port
+            if host == "None":
+                host = None
+            uvicorn.run(app=APP, host=host, port=port, workers=1)
     except Exception:
         traceback.print_exc()
         os.kill(os.getpid(), signal.SIGTERM)
